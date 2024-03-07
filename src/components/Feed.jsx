@@ -1,0 +1,79 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import SideBar from "./SideBar";
+import { fetchFromAPI } from "../utils/fetchFromAPI";
+import Videos from "./Videos";
+import BannerImage from "../Assets/home-banner-background.png"; // Import your background image
+
+const Feed = () => {
+  const [selectedCategory, setSelectedCategory] = useState("New");
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    setVideos([]);
+    fetchFromAPI(`search?part=snippet&q=${selectedCategory}`).then((data) =>
+      setVideos(data.items)
+    );
+  }, [selectedCategory]);
+
+  return (
+    <Stack sx={{ flexDirection: { sx: "column", md: "row" } }}>
+      <Box
+        sx={{
+          height: { sx: "auto", md: "92vh" },
+          borderRight: "1px solid #3d3d3d",
+          px: { sx: 0, md: 2 },
+        }}
+      >
+        {/* Creating Sidebar */}
+        <SideBar
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+        <Typography
+          className="copyright"
+          variant="body2"
+          sx={{ mt: 1.5, color: "#fff" }}
+        >
+          Copyright 2023 Saibalji Kokate
+        </Typography>
+      </Box>
+      <Box
+        p={2}
+        sx={{
+          overflowY: "auto",
+          flex: "auto",
+          height: "90vh",
+          backgroundImage: `url(${BannerImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "right",
+          borderRadius: "8px", // Apply border radius to the background image
+        }}
+        margin="auto"
+      >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          mb={2}
+          sx={{ color: "white" }}
+          marginLeft={3}
+        >
+          <span>
+            {selectedCategory}{" "}
+            <span
+              style={{
+                color: "#392467",
+              }}
+            >
+              Videos
+            </span>
+          </span>
+        </Typography>
+        <Videos videos={videos} />
+      </Box>
+    </Stack>
+  );
+};
+
+export default Feed;
